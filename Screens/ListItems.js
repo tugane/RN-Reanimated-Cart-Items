@@ -21,8 +21,8 @@ import {
   GestureHandlerRootView,
   TapGestureHandler,
 } from "react-native-gesture-handler";
-import { List } from "react-native-paper";
 import ListItem from "../components/ListItem";
+
 const height = Dimensions.get("window").height;
 const width = Dimensions.get("window").width;
 const SPACING = 10;
@@ -34,29 +34,33 @@ const ListItems = () => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const opacity = useSharedValue(0);
+  const scale = useSharedValue(1);
+
   const rStyle = useAnimatedStyle(() => {
     return {
       transform: [
         { translateX: translateX.value },
         { translateY: translateY.value },
+        { scale: scale.value },
       ],
       opacity: opacity.value,
     };
   });
 
   const gestureEvent = useAnimatedGestureHandler({
-    onStart: () => {},
     onActive: ({ absoluteX, absoluteY }) => {
       translateX.value = absoluteX;
+      scale.value = 1;
       translateY.value = withTiming(absoluteY, { duration: 0 }, (finished) => {
         if (finished) {
           opacity.value = withTiming(1);
-          translateX.value = withTiming(X, { duration: 600 });
-          translateY.value = withTiming(Y, { duration: 600 }, (finished) => {
+          translateX.value = withTiming(X, { duration: 800 });
+          translateY.value = withTiming(Y, { duration: 800 }, (finished) => {
             if (finished) {
               opacity.value = withTiming(0);
             }
           });
+          scale.value = withTiming(0, { duration: 800 });
         }
       });
     },
@@ -68,8 +72,8 @@ const ListItems = () => {
           rStyle,
           {
             zIndex: SPACING,
-            width: SPACING * 5,
-            height: SPACING * 5,
+            width: SPACING * 10,
+            height: SPACING * 10,
             justifyContent: "center",
             position: "absolute",
             alignItems: "center",
